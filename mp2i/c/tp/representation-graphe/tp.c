@@ -142,7 +142,13 @@ bool possède_boucle_v2(graph g){
     return res;
 }
 
-
+bool est_successeur_v1(graph g, int i, int j){
+    bool res = false;
+    for (int p = 0; p < g.lst[i][0]; p++ ){
+        res |= g.lst[i][p+1] == j;
+    }
+    return res;
+}
 
 
 int main(){
