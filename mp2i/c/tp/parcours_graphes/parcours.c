@@ -1,4 +1,6 @@
 #include "../../libraries.h"
+#include "pile/pile.h"
+#include "file/file.h"
 
 struct graphe_s {
     int nb_sommets;
@@ -20,8 +22,67 @@ void explorer(int s, graphe G, int* vus){
 
 void parcours_profondeur(graphe G, int dep){
     int vus[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0,};
+    // vus peut être plus grand mais flm
     explorer(dep, G, vus);
     printf("\n");
+}
+
+void parcours_largeur(graphe G, int dep){
+    int vus[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0,};
+    file a_traiter = creer_file();
+    vus[dep] = 1;
+    enfiler(a_traiter, dep);
+    while (!est_vide_file(a_traiter)){
+        int sommet = defiler(a_traiter);
+        printf("%d", sommet);
+        int i = 0;
+        while (G.liste[sommet][i] != -1){
+            if (!vus[G.liste[sommet][i]]){
+                vus[G.liste[sommet][i]] = !vus[G.liste[sommet][i]];
+                enfiler(a_traiter, G.liste[sommet][i]);
+            }
+        }
+    }
+    detruire_file(a_traiter);
+}
+
+void parcours_largeur_pile(graphe G, int dep){
+    int vus[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0,};
+    pile a_traiter = creer_pile();
+    vus[dep] = 1;
+    empiler(a_traiter, dep);
+    while (!est_vide_pile(a_traiter)){
+        int sommet = depiler(a_traiter);
+        printf("%d", sommet);
+        int i = 0;
+        while (G.liste[sommet][i] != -1){
+            if (!vus[G.liste[sommet][i]]){
+                vus[G.liste[sommet][i]] = !vus[G.liste[sommet][i]];
+                empiler(a_traiter, G.liste[sommet][i]);
+            }
+            i ++;
+        }
+    }
+    detruire_pile(a_traiter);
+}
+
+void parcours_generique(graphe G, int dep){
+    int vus[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0,};
+    file a_traiter = creer_file();
+    enfiler(a_traiter, dep);
+    while (!est_vide_file(a_traiter)){
+        int sommet = defiler(a_traiter);
+        if (!vus[sommet]){
+            vus[sommet] = !vus[sommet];
+            printf("%d", sommet);
+            int i = 0;
+            while (G.liste[sommet][i] != -1){
+                enfiler(a_traiter, G.liste[sommet][i]);
+                i++;
+            }
+        }
+    }
+    detruire_file(a_traiter);
 }
 
 int main(){

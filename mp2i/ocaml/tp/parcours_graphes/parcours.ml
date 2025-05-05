@@ -50,6 +50,20 @@ let parcours_largeur (g : int graphe) dep =
     List.iter boucle (Hashtbl.find g s)
   done
     
+  let parcours_generique (g : int graphe) dep = 
+    let vus = [|false; false; false; false; false; false; false; false; false|] in
+    let a_traiter  = Stack.create () in
+    let boucle sommet = Stack.push sommet a_traiter
+    in
+    Stack.push dep a_traiter;
+    while not (Stack.is_empty a_traiter) do 
+      let s = Stack.pop a_traiter in
+      if not vus.(s) then begin
+        vus.(s) <- true;
+        print_int s;
+        List.iter boucle (Hashtbl.find g s)
+      end
+    done
 
 
 let _ = 

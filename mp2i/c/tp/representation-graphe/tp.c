@@ -1,4 +1,4 @@
-#include <stdbool.h>
+#include "../../libraries.h"
 
 typedef int mat_adjacence[900]; // matrice (30,30) linéarisée
 
@@ -142,13 +142,130 @@ bool possède_boucle_v2(graph g){
     return res;
 }
 
-bool est_successeur_v1(graph g, int i, int j){
-    bool res = false;
-    for (int p = 0; p < g.lst[i][0]; p++ ){
-        res |= g.lst[i][p+1] == j;
+
+
+bool est_successeur_v1(graph g, int sj, int si) {
+    for (int indice_successeur = 1; indice_successeur <= g.lst[si][0]; indice_successeur += 1) {
+        if (g.lst[si][indice_successeur] == sj) {
+            return true;
+        }
     }
-    return res;
+    return false;
 }
+
+bool est_successeur_v2(graph g, int sj, int si) {
+    for (int indice_successeur = 0; g.lst[si][indice_successeur] != -1; indice_successeur += 1) {
+        if (g.lst[si][indice_successeur] == sj) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool est_predecesseur_v1(graph g, int si, int sj) {
+    return est_successeur_v1(g, sj, si);
+}
+
+bool est_predecesseur_v2(graph g, int si, int sj) { 
+    return est_successeur_v2(g, sj, si);
+}
+
+void degres_v1(graph g, int sommet, int* degre_entrant, int* degre_sortant) {
+    *degre_entrant = 0;
+    *degre_sortant = g.lst[sommet][0];
+    for (int i = 0; i < g.nb_sommets; i += 1) {
+        for (int j = 1; j <= g.lst[i][0]; j += 1) {
+            if (g.lst[i][j] == sommet) {
+                *degre_entrant += 1;
+            }
+        }
+    }
+}
+
+void degres_v2(graph g, int sommet, int* degre_entrant, int* degre_sortant) {
+    *degre_entrant = 0;
+    *degre_sortant = 0;
+    for (int i = 0; i < g.nb_sommets; i += 1) {
+        for (int j = 0; g.lst[i][j] != -1; j += 1) {
+            if (g.lst[i][j] == sommet) {
+                *degre_entrant += 1;
+            }
+            if (i == sommet) {
+                *degre_sortant += 1;
+            }
+        }
+    }
+}
+
+void serialise_mat(char* nom_fichier, graphe g) {
+    FILE* fichier = fopen(nom_fichier, "w");
+    assert (fichier != NULL);
+    fprintf(fichier, "%d\n", g.nb_sommets);
+    for (int i = 0; i < g.nb_sommets; i += 1) {
+        for (int j = 0; j < g.nb_sommets; j += 1) {
+            if (g.mat[i*g.nb_sommets+j] == 1) {
+                fprintf(fichier, "%d,%d\n", i, j);
+            }
+        }
+    }
+    fclose(fichier);
+}
+
+graphe deserialise_mat(char* nom_fichier) {
+    FILE* fichier = fopen(nom_fichier, "r");
+    assert (fichier != NULL);
+
+    int nb_sommets;
+    fscanf(fichier, "%d", &nb_sommets);
+    graphe g = {nb_sommets, {0}};
+    int i, j;
+    while (fscanf(fichier, "%d,%d", &i, &j) != EOF) {
+        g.mat[i*nb_sommets+j] = 1;
+    }
+
+    fclose(fichier);
+    return g;
+}
+
+
+void serialise_lst(char* nom_fichier, graph g) {
+    FILE* fichier = fopen(nom_fichier, "w");
+    assert (fichier != NULL);
+    fprintf(fichier, "%d\n", g.nb_sommets);
+    for (int i = 0; i < g.nb_sommets; i += 1) {
+        for (int j = 0; g.lst[i][j] != -1; j += 1) {
+            fprintf(fichier, "%d,%d\n", i, g.lst[i][j]);
+        }
+    }
+    fclose(fichier);
+}
+
+graph deserialise_lst(char* nom_fichier)  {
+    FILE* fichier = fopen(nom_fichier, "r");
+    assert (fichier != NULL);
+
+    int nb_sommets;
+    fscanf(fichier, "%d", &nb_sommets);
+
+    graph g = {nb_sommets, {}};
+
+    int degres[30] = {0};
+
+    int i, j;
+    while (fscanf(fichier, "%d,%d", &i, &j) != EOF) {
+
+        g.lst[i][degres[i]] = j;
+
+        degres[i] += 1;
+    }
+    for (int i = 0; i < nb_sommets; i += 1) {
+        g.lst[i][degres[i]] = -1;
+    }
+
+    fclose(fichier);
+    return g;
+}
+
 
 
 int main(){
