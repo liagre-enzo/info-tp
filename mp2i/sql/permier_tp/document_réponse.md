@@ -168,4 +168,24 @@ GROUP BY prix_par_jour
 HAVING COUNT(modele) >= 2;
 ```
 
+Q.27
+
+```SQL
+SELECT immat_voiture
+FROM Locations
+WHERE nb_jours >= 6
+GROUP BY immat_voiture 
+HAVING COUNT() >= 2;
+```
+
+Q.28
+
+```SQL
+SELECT permis_client
+FROM Locations
+WHERE date_debut LIKE '2024%'
+GROUP BY permis_client
+HAVING AVG(nb_jours) >= 4;
+```
+
 // La suite du dm sera fait si j'ai pas la flemme
