@@ -188,4 +188,4 @@ GROUP BY permis_client
 HAVING AVG(nb_jours) >= 4;
 ```
 
-// La suite du dm sera fait si j'ai pas la flemme
+// La suite du tp sera fait si j'ai pas la flemme
