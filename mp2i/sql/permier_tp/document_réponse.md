@@ -44,6 +44,7 @@ Q.9
 SELECT prenom
 FROM Clients
 WHERE LOWER(prenom) LIKE '%e___e%';
+-- N'est pas totalement correcte plutôt utiliser LENGTH mais
 ```
 
 ### 4. Formatages
